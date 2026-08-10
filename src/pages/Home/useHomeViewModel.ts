@@ -1,3 +1,34 @@
+import { useState } from 'react'
+
+import { getMovies } from './HomeModel'
+
 export function useHomeViewModel() {
-  return {}
+  const [query, setQuery] = useState('')
+  const [movies, setMovies] = useState<Awaited<ReturnType<typeof getMovies>>>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleSearch = async () => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const nextMovies = await getMovies(query)
+      setMovies(nextMovies)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unable to load movies.'
+      setError(message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return {
+    query,
+    setQuery,
+    movies,
+    loading,
+    error,
+    handleSearch,
+  }
 }
