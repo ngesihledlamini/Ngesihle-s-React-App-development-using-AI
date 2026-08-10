@@ -1,0 +1,115 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  color: #f8fafc;
+}
+
+.header-brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: #fbbf24;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-nav-link {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.header-nav-link:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.header-nav-link.active {
+  color: #0f172a;
+  background-color: #fbbf24;
+}
+
+.header-search {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.header-search-input {
+  min-width: 220px;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  background-color: rgba(15, 23, 42, 0.6);
+  color: #f8fafc;
+  font: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.header-search-input::placeholder {
+  color: #94a3b8;
+}
+
+.header-search-input:focus {
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2);
+}
+
+.header-search-button {
+  padding: 0.625rem 1.125rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #fbbf24;
+  color: #0f172a;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.header-search-button:hover {
+  background-color: #f59e0b;
+}
+
+.header-search-button:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-wrap: wrap;
+    padding: 1rem;
+  }
+
+  .header-nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .header-search {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .header-search-input {
+    flex: 1;
+    min-width: 0;
+  }
+}
