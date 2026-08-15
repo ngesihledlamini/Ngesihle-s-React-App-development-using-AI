@@ -2,26 +2,23 @@ import type { Movie } from "../../services/omdbMovieService";
 import { addFavourite, removeFavourite, getFavourites } from "../../services/firebaseService";
 
 /**
- * Load all favourite movies.
- * Acts as a thin wrapper around the firebaseService.getFavourites function.
+ * Load all favourite movies for a given userId.
  */
-export async function loadFavourites(): Promise<Movie[]> {
-  return getFavourites();
+export async function loadFavourites(userId: string): Promise<Movie[]> {
+  return getFavourites(userId);
 }
 
 /**
- * Save a movie to favourites.
- * Acts as a thin wrapper around the firebaseService.addFavourite function.
+ * Save a movie to favourites for a given userId.
  */
-export async function saveFavourite(movie: Movie): Promise<void> {
-  return addFavourite(movie);
+export async function saveFavourite(userId: string, movie: Movie): Promise<void> {
+  return addFavourite(userId, movie);
 }
 
 /**
- * Delete a favourite movie by imdbID.
- * Acts as a thin wrapper around the firebaseService.removeFavourite function.
+ * Delete a favourite movie by imdbID for a given userId.
  */
-export async function deleteFavourite(imdbID: string): Promise<void> {
-  return removeFavourite(imdbID);
+export async function deleteFavourite(userId: string, imdbID: string): Promise<void> {
+  return removeFavourite(userId, imdbID);
 }
 

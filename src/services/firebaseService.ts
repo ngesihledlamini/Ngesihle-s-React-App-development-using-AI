@@ -33,17 +33,21 @@ export const auth = getAuth(firebaseApp);
  * Add a movie to the favourites collection. Uses imdbID as the document ID.
  * Throws a readable error when the operation fails.
  */
-export async function addFavourite(movie: Movie): Promise<void> {
+export async function addFavourite(userId: string, movie: Movie): Promise<void> {
+  if (!userId) {
+    throw new Error("Cannot add favourite: userId is required.");
+  }
+
   if (!movie || !movie.imdbID) {
     throw new Error("Cannot add favourite: movie must have an imdbID.");
   }
 
   try {
-    const favDoc = doc(db, "favourites", movie.imdbID);
+    const favDoc = doc(db, "users", userId, "favourites", movie.imdbID);
     await setDoc(favDoc, movie);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    throw new Error(`Failed to add favourite (${movie.imdbID}): ${msg}`);
+    throw new Error(`Failed to add favourite for user ${userId} (${movie.imdbID}): ${msg}`);
   }
 }
 
@@ -51,17 +55,21 @@ export async function addFavourite(movie: Movie): Promise<void> {
  * Remove a movie from the favourites collection by imdbID.
  * Throws a readable error when the operation fails.
  */
-export async function removeFavourite(imdbID: string): Promise<void> {
+export async function removeFavourite(userId: string, imdbID: string): Promise<void> {
+  if (!userId) {
+    throw new Error("Cannot remove favourite: userId is required.");
+  }
+
   if (!imdbID) {
     throw new Error("Cannot remove favourite: imdbID is required.");
   }
 
   try {
-    const favDoc = doc(db, "favourites", imdbID);
+    const favDoc = doc(db, "users", userId, "favourites", imdbID);
     await deleteDoc(favDoc);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    throw new Error(`Failed to remove favourite (${imdbID}): ${msg}`);
+    throw new Error(`Failed to remove favourite for user ${userId} (${imdbID}): ${msg}`);
   }
 }
 
@@ -69,9 +77,13 @@ export async function removeFavourite(imdbID: string): Promise<void> {
  * Retrieve all favourite movies. Returns typed Movie[].
  * Throws a readable error when the operation fails.
  */
-export async function getFavourites(): Promise<Movie[]> {
+export async function getFavourites(userId: string): Promise<Movie[]> {
+  if (!userId) {
+    throw new Error("Cannot get favourites: userId is required.");
+  }
+
   try {
-    const favsCol = collection(db, "favourites");
+    const favsCol = collection(db, "users", userId, "favourites");
     const snapshot = await getDocs(favsCol);
     const movies: Movie[] = [];
 
@@ -88,7 +100,7 @@ export async function getFavourites(): Promise<Movie[]> {
     return movies;
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    throw new Error(`Failed to retrieve favourites: ${msg}`);
+    throw new Error(`Failed to retrieve favourites for user ${userId}: ${msg}`);
   }
 }
 

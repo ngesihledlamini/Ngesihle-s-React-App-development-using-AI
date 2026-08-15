@@ -73,7 +73,7 @@ export function useHomeViewModel() {
 
     // For authenticated users, delegate to the existing favourites saving logic.
     try {
-      await saveFavourite(movie)
+      await saveFavourite(user.uid, movie)
     } catch (err) {
       // Surface error to the local UI state if needed
       const message = err instanceof Error ? err.message : String(err)
