@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs } from "firebase/firestore";
+import type { Movie } from "./omdbMovieService";
 
 // Firebase config read from Vite environment variables (must be prefixed with VITE_)
 const firebaseConfig = {
@@ -25,5 +26,68 @@ const firebaseApp = initializeApp(firebaseConfig as Record<string, any>);
 
 // Export Firestore database instance. Use in app as: import { db } from 'src/services/firebaseService'
 export const db = getFirestore(firebaseApp);
+
+/**
+ * Add a movie to the favourites collection. Uses imdbID as the document ID.
+ * Throws a readable error when the operation fails.
+ */
+export async function addFavourite(movie: Movie): Promise<void> {
+  if (!movie || !movie.imdbID) {
+    throw new Error("Cannot add favourite: movie must have an imdbID.");
+  }
+
+  try {
+    const favDoc = doc(db, "favourites", movie.imdbID);
+    await setDoc(favDoc, movie);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(`Failed to add favourite (${movie.imdbID}): ${msg}`);
+  }
+}
+
+/**
+ * Remove a movie from the favourites collection by imdbID.
+ * Throws a readable error when the operation fails.
+ */
+export async function removeFavourite(imdbID: string): Promise<void> {
+  if (!imdbID) {
+    throw new Error("Cannot remove favourite: imdbID is required.");
+  }
+
+  try {
+    const favDoc = doc(db, "favourites", imdbID);
+    await deleteDoc(favDoc);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(`Failed to remove favourite (${imdbID}): ${msg}`);
+  }
+}
+
+/**
+ * Retrieve all favourite movies. Returns typed Movie[].
+ * Throws a readable error when the operation fails.
+ */
+export async function getFavourites(): Promise<Movie[]> {
+  try {
+    const favsCol = collection(db, "favourites");
+    const snapshot = await getDocs(favsCol);
+    const movies: Movie[] = [];
+
+    snapshot.forEach((d) => {
+      // Firestore returns plain objects; assert to Movie. Ensure imdbID is present.
+      const data = d.data() as Movie;
+      if (!data.imdbID) {
+        // If the stored document omitted imdbID, fall back to the document id.
+        data.imdbID = d.id as unknown as string;
+      }
+      movies.push(data);
+    });
+
+    return movies;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(`Failed to retrieve favourites: ${msg}`);
+  }
+}
 
 export default firebaseApp;
