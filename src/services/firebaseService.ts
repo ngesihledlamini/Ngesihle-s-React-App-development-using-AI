@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import type { Movie } from "./omdbMovieService";
 
 // Firebase config read from Vite environment variables (must be prefixed with VITE_)
@@ -26,6 +27,7 @@ const firebaseApp = initializeApp(firebaseConfig as Record<string, any>);
 
 // Export Firestore database instance. Use in app as: import { db } from 'src/services/firebaseService'
 export const db = getFirestore(firebaseApp);
+export const auth = getAuth(firebaseApp);
 
 /**
  * Add a movie to the favourites collection. Uses imdbID as the document ID.
