@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { getMovies, initialMovies } from './HomeModel'
+import { saveFavourite } from '../Favourites/FavouritesModel'
+import { useAuth } from '../../context/AuthContext'
 
 export function useHomeViewModel() {
   const [query, setQuery] = useState('')
   const [movies, setMovies] = useState<Awaited<ReturnType<typeof getMovies>>>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const navigate = useNavigate()
+  const { user } = useAuth()
 
   const loadInitialMovies = async () => {
     setLoading(true)
@@ -53,6 +59,28 @@ export function useHomeViewModel() {
     }
   }
 
+  /**
+   * Handle when the user favourites a movie from the Home screen.
+   * - If the user is not authenticated, navigate to /favourites (the route will redirect to /auth).
+   * - If authenticated, delegate to the existing saveFavourite function.
+   */
+  const handleFavourite = async (movie: Awaited<ReturnType<typeof getMovies>>[number]): Promise<void> => {
+    if (!user) {
+      // Redirect unauthenticated users to the favourites page (ProtectedRoute will forward them to /auth)
+      navigate('/favourites')
+      return
+    }
+
+    // For authenticated users, delegate to the existing favourites saving logic.
+    try {
+      await saveFavourite(movie)
+    } catch (err) {
+      // Surface error to the local UI state if needed
+      const message = err instanceof Error ? err.message : String(err)
+      setError(message)
+    }
+  }
+
   return {
     query,
     setQuery,
@@ -60,5 +88,6 @@ export function useHomeViewModel() {
     loading,
     error,
     handleSearch,
+    handleFavourite,
   }
 }

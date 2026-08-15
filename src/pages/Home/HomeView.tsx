@@ -1,9 +1,8 @@
 import MovieCard from '../../components/MovieCard/MovieCard'
 import { useHomeViewModel } from './useHomeViewModel'
-import { saveFavourite } from '../Favourites/FavouritesModel'
 
 function HomeView() {
-  const { movies, loading, error } = useHomeViewModel()
+  const { movies, loading, error, handleFavourite } = useHomeViewModel()
 
   return (
     <main>
@@ -13,7 +12,7 @@ function HomeView() {
       <ul>
         {movies.map((movie) => (
           <li key={movie.imdbID}>
-            <MovieCard movie={movie} onFavourite={() => void saveFavourite(movie)} />
+            <MovieCard movie={movie} onFavourite={() => void handleFavourite(movie)} />
           </li>
         ))}
       </ul>
