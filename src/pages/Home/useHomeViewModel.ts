@@ -8,23 +8,34 @@ export function useHomeViewModel() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const loadInitialMovies = async () => {
-      setLoading(true)
-      setError(null)
+  const loadInitialMovies = async () => {
+    setLoading(true)
+    setError(null)
 
-      try {
-        const nextMovies = await initialMovies()
-        setMovies(nextMovies)
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Unable to load movies.'
-        setError(message)
-      } finally {
-        setLoading(false)
-      }
+    try {
+      const nextMovies = await initialMovies()
+      setMovies(nextMovies)
+      setQuery('')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unable to load movies.'
+      setError(message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadInitialMovies()
+  }, [])
+
+  // Listen for explicit "home:reload" events (dispatched by header Home link clicks)
+  useEffect(() => {
+    const handler = () => {
+      void loadInitialMovies()
     }
 
-    void loadInitialMovies()
+    window.addEventListener('home:reload', handler)
+    return () => window.removeEventListener('home:reload', handler)
   }, [])
 
   const handleSearch = async () => {

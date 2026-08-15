@@ -6,7 +6,7 @@ function Header() {
     <header className="header">
       <div className="header-brand">Movie Finder</div>
       <nav className="header-nav">
-        <NavLink to="/" className="header-nav-link" end>
+        <NavLink to="/" className="header-nav-link" end onClick={() => window.dispatchEvent(new Event('home:reload'))}>
           Home
         </NavLink>
         <NavLink to="/favourites" className="header-nav-link">
